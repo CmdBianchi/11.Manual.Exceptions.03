@@ -1,0 +1,51 @@
+﻿using System;
+using Entities.Exceptions;
+namespace Entities {
+    class Reservation {
+        public int RoomNumber { get; set; }
+        public DateTime CheckIn { get; set; }
+        public DateTime CheckOut { get; set; }
+
+        public Reservation() { 
+        }
+        public Reservation(int roomNumber, DateTime checkIn, DateTime checkOut) {
+            if(checkOut <= checkIn) {
+                throw new DomainException("Check-out date must be after check-in date");
+            }
+            RoomNumber = roomNumber;
+            CheckIn = checkIn;
+            CheckOut = checkOut;
+        }
+
+        public int Duration() {
+            TimeSpan duration = CheckOut.Subtract(CheckIn); // --- > Usar TimeSpan para poder fazer a diferença
+            return (int)duration.TotalDays;
+        }
+
+        public void UpdateDates(DateTime checkIn, DateTime checkOut) {
+
+            DateTime now = DateTime.Now; // ----- > DATA DO COMPUTADOR
+            if(checkIn < now || checkOut < now) {
+                throw new DomainException("Reservation dates for update must be future dates");
+            }
+            else if(checkOut <= checkIn) {
+                throw new DomainException("Check-out date must be after check-in date");
+            }
+
+            CheckIn = checkIn;
+            CheckOut = checkOut;        
+        }
+
+        public override string ToString() {
+            return "Romm "
+                + RoomNumber
+                + ", check-in: "
+                + CheckIn.ToString("dd/MM/yyyy")
+                + ", check-out: "
+                + CheckOut.ToString("dd/MM/yyyy")
+                + ", "
+                + Duration()
+                + " nights";
+        }
+    }
+}
